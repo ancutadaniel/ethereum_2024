@@ -89,8 +89,8 @@ const TestApp
       const transaction = {
         to: contractAddress,
         data: contract.interface.encodeFunctionData("addUser", [
-          "0x5022DdD52cA7590424e3506BF2312Eb025275Df8",
-          "Daniel",
+          "0x5D52cA7590424e3506BF2312Eb025275Df8",
+          "xxxx",
         ]),
         nonce,
         gasPrice,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ethers, Eip1193Provider } from "ethers";
 
 declare global {
@@ -14,7 +14,10 @@ const MetamaskConnection: React.FC = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
 
-  const connectMetamask = async () => {
+  /**
+   * Connect to MetaMask and fetch the user's address and balance.
+   */
+  const connectMetamask = useCallback(async () => {
     if (window.ethereum) {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -30,22 +33,32 @@ const MetamaskConnection: React.FC = () => {
     } else {
       console.error("MetaMask is not installed");
     }
-  };
+  }, []);
 
-  const disconnectMetamask = () => {
+  /**
+   * Disconnect from MetaMask by resetting the address and balance state.
+   */
+  const disconnectMetamask = useCallback(() => {
     setAddress(null);
     setBalance(null);
-  };
+  }, []);
 
-  const handleAccountsChanged = (accounts: unknown) => {
+  /**
+   * Handle changes to the user's MetaMask accounts.
+   * @param accounts The new list of accounts.
+   */
+  const handleAccountsChanged = useCallback((accounts: unknown) => {
     const accountsArray = accounts as string[];
     if (accountsArray.length > 0) {
       connectMetamask();
     } else {
       disconnectMetamask();
     }
-  };
+  }, [connectMetamask, disconnectMetamask]);
 
+  /**
+   * Set up and clean up event listeners for account changes.
+   */
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on?.("accountsChanged", handleAccountsChanged);
@@ -56,7 +69,7 @@ const MetamaskConnection: React.FC = () => {
         window.ethereum.removeListener?.("accountsChanged", handleAccountsChanged);
       }
     };
-  }, []);
+  }, [handleAccountsChanged]);
 
   return (
     <div>

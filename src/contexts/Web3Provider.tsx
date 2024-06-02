@@ -28,6 +28,7 @@ type Web3ContextType = {
   nonce: number;
   gasPrice: BigNumberish | null;
   signer: JsonRpcSigner | undefined;
+  balance: BigInt | undefined;
   connect: () => Promise<WalletState[]>;
   disconnect: (wallet: any) => Promise<WalletState[]>;
   fetchUsers: () => Promise<void>;
@@ -97,6 +98,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({
   const [nonce, setNonce] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<BigNumberish | null>(null);
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>();
+  const [balance, setBalance] = useState<bigint>();
 
   const fetchUsers = useCallback(async () => {
     if (!contract) return;
@@ -140,6 +142,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({
         const contractAddress =
           config[network.chainId.toString() as keyof typeof config].address;
         const nonce = await signerInstance.getNonce();
+        const balance = await ethersProvider.getBalance(signerInstance.address)
 
         const contractInstance = new ethers.Contract(
           contractAddress,
@@ -152,6 +155,8 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({
         setContract(contractInstance);
         setGasPrice(gasPrice);
         setSigner(signerInstance);
+        setBalance(balance);
+        
       } catch (error) {
         customNotification({
           eventCode: "error",
@@ -180,6 +185,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({
       nonce,
       gasPrice,
       signer,
+      balance,
       connect,
       disconnect,
       customNotification,
@@ -194,6 +200,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({
       nonce,
       gasPrice,
       signer,
+      balance,
       connect,
       disconnect,
       customNotification,
