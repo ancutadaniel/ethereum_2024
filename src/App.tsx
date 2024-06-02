@@ -132,7 +132,7 @@ const App: React.FC = () => {
   }, [address]);
 
   return (
-    <div>
+    <div className="container">
       {address && (
         <>
           <h2>
@@ -143,7 +143,7 @@ const App: React.FC = () => {
                 className="blockie"
               />
               <div className="tooltip" onClick={handleCopyAddress}>
-                {address}
+                {`${address.slice(0,6)}...${address.slice(38)}`}
                 <span className="tooltip-text" ref={tooltipRef}>
                   Copy
                 </span>
@@ -163,7 +163,7 @@ const App: React.FC = () => {
         {connecting ? "Connecting..." : wallet ? "Disconnect" : "Connect"}
       </button>
       {wallet && (
-        <div>
+        <div className="wallet">
           <input
             type="text"
             placeholder="Enter user name"
